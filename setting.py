@@ -26,9 +26,3 @@ class Settings:
         # Naver API
         self.naver_api_id = "id"
         self.naver_api_secret = "secret"
-
-        # Twitter API
-        self.twitter_api_key = "key"
-        self.twitter_api_secret = "secret"
-        self.twitter_access_token = "token"
-        self.twitter_access_secret = "secret"

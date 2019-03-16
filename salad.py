@@ -4,7 +4,6 @@ import asyncio, discord, datetime, re, sys, os, random, requests, json, urllib.r
 from bs4 import BeautifulSoup as bs4
 from unter_translate import *
 from naver_api import *
-from twitter import *
 from msg_log import *
 from mysql import *
 from preta import *
@@ -325,7 +324,7 @@ async def on_message(message):
 
                 if message.content == prefix + "도움말":
                     embed = discord.Embed(title="팀 샐러드 봇 도움말", description="`<>` : 필수입력\n`[]` : 선택입력\n`A|B` : A와 B중 택 1", color=Setting.embed_color)
-                    embed.add_field(name="카테고리 : `일반`", value="`%s정보` - 봇에 대한 정보를 출력합니다!\n`%s트위터 <메타>` - 입력한 멤버의 최근 5개의 트윗을 불러옵니다!\n`%s카페 <팬카페공지|방송공지|전체글>` - 해당 게시판의 최근 5개(전체글은 8개)의 글을 불러옵니다!\n`%s카페 대문` - 카페 대문을 보여줍니다!\n`%s번역 <도움말|...> <...>` - `%s번역 도움말`을 확인해주세요." % (prefix, prefix, prefix, prefix, prefix, prefix), inline=False)
+                    embed.add_field(name="카테고리 : `일반`", value="`%s정보` - 봇에 대한 정보를 출력합니다!\n`%s카페 <팬카페공지|방송공지|전체글>` - 해당 게시판의 최근 5개(전체글은 8개)의 글을 불러옵니다!\n`%s카페 대문` - 카페 대문을 보여줍니다!\n`%s번역 <도움말|...> <...>` - `%s번역 도움말`을 확인해주세요." % (prefix, prefix, prefix, prefix, prefix, prefix), inline=False)
                     embed.add_field(name="카테고리 : `음성`", value="`%s접속` - 참가해있는 음성 채널에 봇을 초대합니다.\n`%s나가기` - 봇이 음성 채널에서 나갑니다.\n`%s정지` - 음악 정지를 위해 봇이 음성채널에 재입장 합니다." % (prefix, prefix, prefix), inline = False)
                     embed.add_field(name="카테고리 : `재미`", value="`사과야 ~` - 마플 AI를 사용할 수 있습니다. 자세한 내용은 `사과야 도와줘` 참고.\n`운터야 ~` - 운터 AI를 사용 할 수 있습니다. 자세한 내용은 `운터야 도와줘` 참고.\n`%s운세 [도움말]` - 운세를 볼 수 있습니다. 1일 1회로 제한됩니다." % (prefix), inline = False)
                     embed.add_field(name="카테고리 : `설정 (관리자 권한 필요)`", value="`%s음성알림 <켜기|끄기>` - 봇이 음성채널에 접속&퇴장시 `이예에에에에!!!!` 와 `안해`를 외칠지 결정합니다.\n`%s방송알림 <트위치|유튜브|도움말>` - `%s방송알림 도움말`을 참고하여 주세요.\n`%s환영말 <끄기|할말>` - 유저가 서버에 입장하면 환영말을 띄웁니다!\n`%s떠나는말 <끄기|할말>` - 유저가 서버에 퇴장하면 떠나보내는 말을 띄웁니다!\n`%s접두사 <...>` - 접두사가 타 봇과 겹치는 경우, 수정이 가능합니다." % (prefix, prefix, prefix, prefix, prefix, prefix), inline = False)
@@ -636,37 +635,6 @@ async def on_message(message):
                             await app.send_message(message.channel, "<@%s>," % (message.author.id), embed=embed)
                     else:
                         await app.send_message(message.channel, '<@%s>, 올바르지 않은 값이 입력되었습니다! `%s방송알림 도움말`을 입력하여 확인해주세요!' % (message.author.id, prefix))
-
-                if message.content == prefix + "트위터 메타":
-                    waitmsg = await app.send_message(message.channel, '<@%s>, 처리중입니다! 잠시만 기다려 주세요!' % (message.author.id))
-
-                    twitter_id = "m3tta___"
-
-                    data = requests.get("https://twitter.com/%s" % twitter_id)
-                    status = data.status_code
-                    if status != 200:
-                        await custom_error(message, status, "일시적인 서비스 다운으로 추측 됩니다. 잠시 후 다시 시도해 주세요.")
-                    else:
-                        soup = bs4(data.text, "html.parser")
-                        results = str(soup.find_all('img', {'class' : 'ProfileAvatar-image'}))
-
-                        split = results.split("src=")
-                        image = str(split[1])
-                        image = image.replace(""""/>]""", "")
-                        image = image.replace(""""https://""", "")
-
-                        split = results.split("alt=")
-                        nickname = str(split[1])
-                        nickname = nickname.replace("""class="ProfileAvatar-image" src="https://%s"/>]""" % (image), "")
-
-                        embed = discord.Embed(title="%s님 트위터 최근 트윗" % (nickname), url="https://twitter.com/%s" % twitter_id, description="__**주의! 이 기능은 불안정합니다!**__\n**`최근 트윗`**은 **답글도 포함**합니다.", color=Setting.embed_color)
-                        embed.set_thumbnail(url="https://%s" % (image))
-                        embed.set_footer(text="Ver. %s | %s" % (Setting.version, Copyright))
-
-                        response = await show_tweets(message, twitter_id, "5", "False", embed)
-
-                        await app.delete_message(waitmsg)
-                        await app.send_message(message.channel, "<@%s>," % (message.author.id), embed=embed)
 
                 if message.content.startswith(prefix + '음성알림'):
                     if message.author.server_permissions.administrator or message.author.id in Setting.bot_admin:
