@@ -324,7 +324,7 @@ async def on_message(message):
 
                 if message.content == prefix + "도움말":
                     embed = discord.Embed(title="팀 샐러드 봇 도움말", description="`<>` : 필수입력\n`[]` : 선택입력\n`A|B` : A와 B중 택 1", color=Setting.embed_color)
-                    embed.add_field(name="카테고리 : `일반`", value="`%s정보` - 봇에 대한 정보를 출력합니다!\n`%s카페 <팬카페공지|방송공지|전체글>` - 해당 게시판의 최근 5개(전체글은 8개)의 글을 불러옵니다!\n`%s카페 대문` - 카페 대문을 보여줍니다!\n`%s번역 <도움말|...> <...>` - `%s번역 도움말`을 확인해주세요." % (prefix, prefix, prefix, prefix, prefix, prefix), inline=False)
+                    embed.add_field(name="카테고리 : `일반`", value="`%s정보` - 봇에 대한 정보를 출력합니다!\n`%s카페 <팬카페공지|방송공지|전체글>` - 해당 게시판의 최근 5개(전체글은 8개)의 글을 불러옵니다!\n`%s카페 대문` - 카페 대문을 보여줍니다!\n`%s번역 <도움말|...> <...>` - `%s번역 도움말`을 확인해주세요." % (prefix, prefix, prefix, prefix, prefix), inline=False)
                     embed.add_field(name="카테고리 : `음성`", value="`%s접속` - 참가해있는 음성 채널에 봇을 초대합니다.\n`%s나가기` - 봇이 음성 채널에서 나갑니다.\n`%s정지` - 음악 정지를 위해 봇이 음성채널에 재입장 합니다." % (prefix, prefix, prefix), inline = False)
                     embed.add_field(name="카테고리 : `재미`", value="`사과야 ~` - 마플 AI를 사용할 수 있습니다. 자세한 내용은 `사과야 도와줘` 참고.\n`운터야 ~` - 운터 AI를 사용 할 수 있습니다. 자세한 내용은 `운터야 도와줘` 참고.\n`%s운세 [도움말]` - 운세를 볼 수 있습니다. 1일 1회로 제한됩니다." % (prefix), inline = False)
                     embed.add_field(name="카테고리 : `설정 (관리자 권한 필요)`", value="`%s음성알림 <켜기|끄기>` - 봇이 음성채널에 접속&퇴장시 `이예에에에에!!!!` 와 `안해`를 외칠지 결정합니다.\n`%s방송알림 <트위치|유튜브|도움말>` - `%s방송알림 도움말`을 참고하여 주세요.\n`%s환영말 <끄기|할말>` - 유저가 서버에 입장하면 환영말을 띄웁니다!\n`%s떠나는말 <끄기|할말>` - 유저가 서버에 퇴장하면 떠나보내는 말을 띄웁니다!\n`%s접두사 <...>` - 접두사가 타 봇과 겹치는 경우, 수정이 가능합니다." % (prefix, prefix, prefix, prefix, prefix, prefix), inline = False)
