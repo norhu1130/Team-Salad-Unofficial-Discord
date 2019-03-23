@@ -183,6 +183,7 @@ async def on_message(message):
             ping = int(msgdelay * 1000)
 
             mysql_add_table_content("saladstatus", "ping", ping)
+            mysql_add_table_content("saladstatus", "status", "1")
 
             if os.path.isfile("Server_%s/maple_ver.setting" % (message.server.id)):
                 try:
@@ -402,7 +403,7 @@ async def on_message(message):
 
                 if message.content.startswith(prefix + '환영말'):
                     if message.author.server_permissions.administrator or message.author.id in Setting.bot_admin:
-                        q = message.contetn.replace(prefix + '환영말', '')
+                        q = message.content.replace(prefix + '환영말', '')
                         if "끄기" in q:
                             try:
                                 os.remove("Server_%s/welcome_msg.setting" % (message.server.id))
@@ -427,7 +428,7 @@ async def on_message(message):
 
                 if message.content.startswith(prefix + '떠나는말'):
                     if message.author.server_permissions.administrator or message.author.id in Setting.bot_admin:
-                        q = message.contetn.replace(prefix + '떠나는말', '')
+                        q = message.content.replace(prefix + '떠나는말', '')
                         if "끄기" in q:
                             try:
                                 os.remove("Server_%s/bye_msg.setting" % (message.server.id))
