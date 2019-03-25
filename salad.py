@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-import asyncio, discord, datetime, re, sys, os, random, requests, json, urllib.request, oauth2, setting
+import asyncio, discord, datetime, re, sys, os, random, requests, json, urllib.request, psutil, ctypes, oauth2, setting
 from bs4 import BeautifulSoup as bs4
 from unter_translate import *
 from naver_api import *
@@ -103,12 +103,12 @@ async def on_message(message):
     except Exception as e:
         print("msg log error : %s" % (e))
 
-    if message.channel.id == "554301796328407050": # "checking-uptime" Channel
+    if message.channel.id == "559188829513449491": # "uptime-checking" Channel
         if message.author.id == "554300338274959360":
             if "I'll check the status of Bot Online." in message.content:
                 await app.send_message(message.channel, "Team Salad Online")
 
-    if message.channel.id == "548810810995245059": # "salad-yt-notice" Channel
+    if message.channel.id == "559188543038160906": # "team-salad-yt-notice" Channel
         if message.author.id == "159985870458322944":
             split = message.content.split("|")
             channel_name = str(split[0])
@@ -130,7 +130,7 @@ async def on_message(message):
             while not result:
                 try:
                     channel_id = str(lists[count])
-                    await app.send_message(app.get_channel(channel_id), "방금 `%s` 채널에 영상이 업로드 되었습니다!\n%s" % (channel_name, video_id))
+                    await app.send_message(app.get_channel(channel_id), "방금 `%s` 채널에 영상이 업로드 되었습니다! %s" % (channel_name, video_id))
                 except:
                     pass
                 if count == int(num) - 1:
@@ -138,7 +138,7 @@ async def on_message(message):
                 else:
                     count = count + 1
 
-    if message.channel.id == "548810852996743198": # "salad-twitch-notice" Channel
+    if message.channel.id == "559188590748368897": # "team-salad-twitch-notice" Channel
         if message.author.id == "159985870458322944":
             split = message.content.split("|")
             channel_name = str(split[0])
@@ -295,6 +295,20 @@ async def on_message(message):
                     else:
                         await app.send_message(message.channel, '<@%s>, 당신은 봇 관리자가 아닙니다!' % (message.author.id))
 
+                if message.content == "salad admin info":
+                    if message.author.id in Setting.bot_admin:
+                        stat = setting.MEMORYSTATUSEX()
+                        ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat))
+                        cpu = psutil.cpu_percent()
+                        mem = stat.dwMemoryLoad
+                        servers = open("servers.rtl", 'r').read()
+                        embed = discord.Embed(title="정보", description=None, color=Setting.embed_color)
+                        embed.add_field(name="봇 정보", value="`%s`/`%s`개의 서버에서 사용중" % (len(app.servers), servers), inline=False)
+                        embed.add_field(name="하드웨어 정보", value="CPU : `%s/100` 사용중\nRAM : `%s/100` 사용중\n\n**보안을 위하여 모델명은 노출하지 않습니다**" % (cpu, mem), inline=False)
+                        await app.send_message(message.channel, embed=embed)
+                    else:
+                        await app.send_message(message.channel, '<@%s>, 당신은 봇 관리자가 아닙니다!' % (message.author.id))
+
                 if message.content.startswith("salad admin game"):
                     if message.author.id in Setting.bot_admin:
                         q = message.content.replace("salad admin game ", "")
@@ -329,7 +343,7 @@ async def on_message(message):
                     embed.add_field(name="카테고리 : `음성`", value="`%s접속` - 참가해있는 음성 채널에 봇을 초대합니다.\n`%s나가기` - 봇이 음성 채널에서 나갑니다.\n`%s정지` - 음악 정지를 위해 봇이 음성채널에 재입장 합니다." % (prefix, prefix, prefix), inline = False)
                     embed.add_field(name="카테고리 : `재미`", value="`사과야 ~` - 마플 AI를 사용할 수 있습니다. 자세한 내용은 `사과야 도와줘` 참고.\n`운터야 ~` - 운터 AI를 사용 할 수 있습니다. 자세한 내용은 `운터야 도와줘` 참고.\n`%s운세 [도움말]` - 운세를 볼 수 있습니다. 1일 1회로 제한됩니다." % (prefix), inline = False)
                     embed.add_field(name="카테고리 : `설정 (관리자 권한 필요)`", value="`%s음성알림 <켜기|끄기>` - 봇이 음성채널에 접속&퇴장시 `이예에에에에!!!!` 와 `안해`를 외칠지 결정합니다.\n`%s방송알림 <트위치|유튜브|도움말>` - `%s방송알림 도움말`을 참고하여 주세요.\n`%s환영말 <끄기|할말>` - 유저가 서버에 입장하면 환영말을 띄웁니다!\n`%s떠나는말 <끄기|할말>` - 유저가 서버에 퇴장하면 떠나보내는 말을 띄웁니다!\n`%s접두사 <...>` - 접두사가 타 봇과 겹치는 경우, 수정이 가능합니다." % (prefix, prefix, prefix, prefix, prefix, prefix), inline = False)
-                    embed.add_field(name="카테고리 : `봇 관리자`", value="`salad admin shutdown` - 봇의 가동을 중지시킵니다.\n`salad admin game <...>` - 봇이 플레이중인 게임을 바꿀 수 있습니다.\n`salad admin notice <...>` - 공지를 보낼 수 있습니다.\n`salad admin url short <...>` - url 단축을 사용할 수 있습니다.", inline = False)
+                    embed.add_field(name="카테고리 : `봇 관리자`", value="`salad admin shutdown` - 봇의 가동을 중지시킵니다.\n`salad admin game <...>` - 봇이 플레이중인 게임을 바꿀 수 있습니다.\n`salad admin notice <...>` - 공지를 보낼 수 있습니다.\n`salad admin url short <...>` - url 단축을 사용할 수 있습니다.\n`salad admin info` - 봇과 관련한 정보를 표시합니다.", inline = False)
                     embed.add_field(name="카테고리 : `팀 샐러드`", value="팀 샐러드 유튜브 : http://me2.do/FwVM95S2\n팀 샐러드 팬카페 : http://me2.do/5vDU2PWk", inline = False)
                     embed.add_field(name="카테고리 : `팀 화공`", value="공식 지원서버 : https://invite.gg/rutapbot\n공식 홈페이지 : https://rutapofficial.xyz", inline = False)
                     embed.set_footer(text="Ver. %s | %s" % (Setting.version, Copyright))
@@ -373,6 +387,7 @@ async def on_message(message):
                     else:
                         if os.path.isfile("fortune/%s_%s_%s_%s_complete.log" % (now.year, now.month, now.day, message.author.id)):
                             await app.send_message(message.channel, '<@%s>, 오늘은 이미 운세를 조회하셨습니다! 내일 다시 와주세요!' % (message.author.id))
+                            return None
                         else:
                             result = random.randint(1, 9)
                             if result == 1:
@@ -395,6 +410,7 @@ async def on_message(message):
                                 result = ":skull_crossbones: :boom: **대대흉** :boom: :skull_crossbones:\n`망 했 어 요...`"
                             else:
                                 await custom_error(message, "unknown result in fortune :: %s" % (result), "예상치 못한 애러입니다. 저희팀에 문의하여 주세요.")
+                                return None
 
                         embed = discord.Embed(title="오늘의 운세!", description=result, color=Setting.embed_color)
                         embed.set_footer(text="Ver. %s | %s" % (Setting.version, Copyright))
@@ -1042,7 +1058,7 @@ async def on_message(message):
                         voice = await app.join_voice_channel(message.author.voice_channel)
                     except Exception as e:
                         pass
-                    await app.send_message(message.channel, '<@%s>, 이스터에그1 발견! 주민마을이다ㅏㅏ 이예ㅖㅖ' % (message.author.id))
+                    await app.send_message(message.channel, '<@%s>, 이스터에그 발견! 주민마을이다ㅏㅏ 이예ㅖㅖ' % (message.author.id))
                     await music_play(message, app, "tnt.mp3", 231)
             else:
                 try:
