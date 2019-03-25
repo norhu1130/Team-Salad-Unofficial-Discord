@@ -301,7 +301,7 @@ async def on_message(message):
                         ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat))
                         cpu = psutil.cpu_percent()
                         mem = stat.dwMemoryLoad
-                        servers = open("servers.rtl", 'r').read()
+                        servers = open("servers.log", 'r').read()
                         embed = discord.Embed(title="정보", description=None, color=Setting.embed_color)
                         embed.add_field(name="봇 정보", value="`%s`/`%s`개의 서버에서 사용중" % (len(app.servers), servers), inline=False)
                         embed.add_field(name="하드웨어 정보", value="CPU : `%s/100` 사용중\nRAM : `%s/100` 사용중\n\n**보안을 위하여 모델명은 노출하지 않습니다**" % (cpu, mem), inline=False)
