@@ -312,7 +312,7 @@ async def on_message(message):
                 if message.content.startswith("salad admin game"):
                     if message.author.id in Setting.bot_admin:
                         q = message.content.replace("salad admin game ", "")
-                        f = open("rpc.setting", 'w')
+                        f = open("rpc.setting", 'r')
                         old = f.read()
                         f.close()
                         open("rpc.setting", 'w').write(q)
@@ -326,6 +326,7 @@ async def on_message(message):
                         await app.change_presence(game=discord.Game(name="Offline", type=0))
                         await app.send_message(message.channel, '<@%s>, 5분 이내에 오프라인으로 전환됩니다. (디스코드 API 딜레이)' % (message.author.id))
                         mysql_add_table_content("saladstatus", "status", "0")
+                        app.logout()
                         exit()
                     else:
                         await app.send_message(message.channel, '<@%s>, 당신은 봇 관리자가 아닙니다!' % (message.author.id))
@@ -689,39 +690,15 @@ async def on_message(message):
                         original = original.replace('"', "")
                         file = "https://%s" % (original)
 
-                        original = str(posts[1])
+                        original = str(posts[2])
                         original = re.sub("""&nbsp;|amp;|\t|<div style="text-align: center;">|<span style="font-size: 10pt;">|<b>|</b>|<b style="font-size: 10pt;">|</div>|</span>""", '', original)
                         original = original.replace("이번주 추천 그림", "")
                         title = original
 
-                        original = str(posts[2])
-                        original = re.sub("""&nbsp;|amp;|\t|<div style="text-align: center;">|<span style="font-size: 10pt;">|</div>|</span>|<a class="m-tcol-c url-txt" href="|</a>""", '', original)
-                        original = original.replace(""""<font color="#666666" face="돋움"><span style="display: inline-block; margin-top: 3px; font-size: 11px; overflow-wrap: break-word; text-align: -webkit-right;">""", '')
-                        original = re.findall(r'\d+', original)
-
-                        complete = False
-                        count = 1
-                        while not complete:
-                            if len(str(original[count])) < 5:
-                                count = count + 1
-                                pass
-                            else:
-                                complete = True
-                                id = original[count]
-                                print(id)
-
-                        link = "https://cafe.naver.com/teamsalad/%s" % (id)
-                        print(link)
-
-                        url = await url_short(message, link)
-
-                        if url == False:
-                            return None
-                        else:
-                            embed.add_field(name=title, value="링크 : %s" % (url), inline = False)
-                            embed.set_image(url=file)
-                            embed.set_footer(text="Ver. %s | %s" % (Setting.version, Copyright))
-                            await app.send_message(message.channel, '<@%s>,' % (message.author.id), embed=embed)
+                        embed.add_field(name=title, value="**`원문 링크 기능은 당분간 지원하지 않습니다`**", inline = False)
+                        embed.set_image(url=file)
+                        embed.set_footer(text="Ver. %s | %s" % (Setting.version, Copyright))
+                        await app.send_message(message.channel, '<@%s>,' % (message.author.id), embed=embed)
 
                 if message.content == prefix + "카페 전체글" or message.content == prefix + "카페 최신글":
                     data = requests.get("https://cafe.naver.com/ArticleList.nhn?search.clubid=29567614&search.boardtype=L")
